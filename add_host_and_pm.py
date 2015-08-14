@@ -37,7 +37,8 @@ try:
     pm.set_address(PM_ADDRESS)
     pm.set_username('root')
     pm.set_password('Secret')
-    pm.set_options(params.Option(name='Domain', value='rhev-h-3'))
+    pm.set_options(params.Options(option=[
+                   params.Option(name='domain', value='rhev-h-3')]))
     pm.set_kdump_detection(True)
 
     if api.hosts.add(params.Host(name=HOST_NAME,
