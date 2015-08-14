@@ -18,6 +18,8 @@ HOST_NAME = 'rhevh1'
 HOST_NAME = 'rhevh1'
 HOST_ADDRESS = '192.168.100.11'
 ROOT_PASSWORD = 'superSecret'
+#
+PM_ADDRESS = '192.168.101.11'
 
 try:
         api = API(url=URL, username=USERNAME, password=PASSWORD, ca_file=CA)
@@ -27,10 +29,18 @@ except Exception as err:
         print "Connection failed: %s" % err
 
 try:
+    pm = params.Powermanagement()
+    pm.set_type('ilo')
+    pm.set_enabled(True)
+    pm.set_address(PM_ADDRESS)
+    pm.set_username('root')
+    pm.set_password('Secret')
+
     if api.hosts.add(params.Host(name=HOST_NAME,
                      address=HOST_ADDRESS,
                      cluster=api.clusters.get(CLUSTER_NAME),
-                     root_password=ROOT_PASSWORD)):
+                     root_password=ROOT_PASSWORD,
+                     power_management=pm)):
         print 'Host was added successfully'
         print 'Waiting for host to install and reach the Up status'
         while api.hosts.get(HOST_NAME).status.state != 'up':
