@@ -12,6 +12,7 @@ PASSWORD = 'paSSwoRD'
 
 HOST_NAME = 'rhevh1'
 IP_ADDRESS = '192.168.100.11'
+MOVE_IP = '192.168.101.11'
 NETMASK = '255.255.255.0'
 GATEWAY = '192.168.100.1'
 
@@ -82,10 +83,14 @@ except Exception as err:
 try:
     nic = host.nics.get(name='bond0.110')
     nic.set_boot_protocol('static')
-    nic.set_ip(params.IP(address='192.168.101.11',
-               netmask='255.255.255.0',
+    nic.set_ip(params.IP(address=MOVE_IP,
+               netmask=NETMASK,
                gateway=None))
     nic.update()
+    # Also save the networkconfig to the host
+    # Otherwise there will be an "action marker"
+    # in the Web-UI telling to Save the network
+    host.commitnetconfig()
 
 except Exception as err:
         print "Setting IP failed: %s" % err
