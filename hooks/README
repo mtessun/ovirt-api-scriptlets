@@ -1,0 +1,8 @@
+The hooks added here need to be placed into
+the correct directory on each Hypervisor Host.
+The hooks need to be executable by vdsm.
+
+Directory: /usr/libexec/vdsm/hooks/<action>
+
+The <action> directory is the same as the hooks are
+placed into in git.
