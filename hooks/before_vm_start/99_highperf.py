@@ -71,8 +71,12 @@ if 'highperf' in os.environ:
             feature_rdt = domxml.createElement('feature')
             feature_rdt.setAttribute('policy', 'require')
             feature_rdt.setAttribute('name', 'rdtscp')
+            feature_lvl3 = domxml.createElement('cache')
+            feature_lvl3.setAttribute('level','3')
+            feature_lvl3.setAttribute('mode','emulate')
             cpu.appendChild(feature_tsc)
             cpu.appendChild(feature_rdt)
+            cpu.appendChild(feature_lvl3)
 
         hooking.write_domxml(domxml)
     except Exception:
