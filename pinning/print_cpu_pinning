@@ -1,0 +1,43 @@
+#!/bin/bash
+
+usage() {
+cat << EOR
+Usage: $0 [num_vcpu]
+
+This script creates CPU pinning according to the host CPU topology up to the max number of CPUs and always leaving cpu core0 and according threads to the hypervisor for each numa node
+
+EOR
+exit 1
+}
+
+num_sockets=$(lscpu | awk -F: '/^Socket\(s\)/ { print $2}' | tr -d " ")
+num_threads=$(lscpu | awk -F: '/^Thread\(s\) per core/ { print $2}'| tr -d " ")
+if [ -n "$1" ]; then
+  max_cnt=$(( $1 / $num_sockets / $num_threads ));
+  PARM="-v CNT=$max_cnt"
+fi
+
+numactl --hardware | awk -F: -v THREADS=$num_threads $PARM '
+       BEGIN { num_threads=THREADS; 
+	       vcpu=0 
+	       if ( CNT ) { cnt = CNT;
+			    print ("limiting to "cnt++" cpus/numa node. " );
+                          }
+	       else {
+			    cnt = 0;
+			    print ("Using all cpus/numa node. " );
+		    }
+             }
+       /node [0-9]+ cpus/ {
+		# split $2 by " " in array cores
+		num_vcpu=split($2,threadnum," ");
+		num_core=num_vcpu / num_threads;
+		if ( cnt == 0 ) { cnt=num_core }
+		for (i=2;i<=cnt ;i++) {
+			for (t=0;t<num_threads ;t++) {
+				printf (vcpu++"#"threadnum[i]","threadnum[i+num_core]"_");
+			}
+		}
+              }
+	END { printf("\n"); }' |  sed 's/.$//'
+
