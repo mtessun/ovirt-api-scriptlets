@@ -42,6 +42,18 @@ if 'hana' in os.environ:
             cpu.appendChild(feature_rdt)
             cpu.appendChild(feature_lvl3)
 
+        if len(domain.getElementsByTagName('clock')):
+            clock = domain.getElementsByTagName('clock')[0]
+            tscClock = domxml.createElement('clock')
+            tscClock.setAttribute('offset', 'utc')
+            timer = domxml.createElement('timer')
+            timer.setAttribute('name','tsc')
+            # Adjust frequency to match the lowest value in your cluster
+            timer.setAttribute('frequency','2494140000')
+            tscClock.appendChild(timer)
+            domain.removeChild(clock)
+            domain.appendChild(tscClock)
+
         hooking.write_domxml(domxml)
     except Exception:
         sys.stderr.write('highperf hook: [unexpected error]: %s\n' %
