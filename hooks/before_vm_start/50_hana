@@ -48,8 +48,8 @@ if 'hana' in os.environ:
             tscClock.setAttribute('offset', 'utc')
             timer = domxml.createElement('timer')
             timer.setAttribute('name','tsc')
-            # Adjust frequency to match the lowest value in your cluster
-            timer.setAttribute('frequency','2494140000')
+            # Uncomment and adjust for live migration (adjust frequency to match the lowest value in your cluster)
+            #timer.setAttribute('frequency','2494140000')
             tscClock.appendChild(timer)
             domain.removeChild(clock)
             domain.appendChild(tscClock)
